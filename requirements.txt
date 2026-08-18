@@ -1,0 +1,31 @@
+# AdverSentinel-LLM Dependencies
+# Tested on: Ubuntu 22.04, Python 3.10, CUDA 12.1
+# Hardware: NVIDIA A100 / V100 / T4 / RTX 3090
+
+# Core deep learning
+torch==2.1.0
+torchvision==0.16.0
+torchaudio==2.1.0
+
+# HuggingFace ecosystem
+transformers==4.38.2
+datasets==2.18.0
+tokenizers==0.15.2
+accelerate==0.27.2
+
+# Scientific computing
+numpy==1.26.4
+scipy==1.12.0
+scikit-learn==1.4.1
+
+# Configuration and utilities
+pyyaml==6.0.1
+tqdm==4.66.2
+einops==0.7.0
+
+# Logging and experiment tracking (optional but recommended)
+tensorboard==2.16.2
+wandb==0.16.4       # Optional — set WANDB_MODE=disabled to skip
+
+# Data handling
+pandas==2.2.1
