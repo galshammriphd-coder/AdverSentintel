@@ -1,0 +1,71 @@
+# AdverSentinel-LLM Default Configuration
+# Matches hyperparameters from Table 2 of the paper exactly.
+
+seed: 42
+output_dir: outputs/
+
+# -----------------------------------------------------------------------
+# Model Architecture
+# -----------------------------------------------------------------------
+model:
+  encoder_backbone:      "bert-base-uncased"  # Both PSE and TPE
+  hidden_dim:            768
+  transformer_layers:    12    # Ls = Lt = 12
+  attention_heads:       12
+  projection_dim:        256   # Output of 2-layer MLP projection head
+  max_sequence_length:   512
+
+  # Dynamic Threat Memory Bank (DTMB)
+  dtmb_prototypes:       64    # M = 64
+  dtmb_categories:       8     # C = 8 threat categories
+  ema_momentum:          0.999 # beta
+  dtmb_bandwidth:        0.5   # Initial sigma_k
+
+  # Prototype maintenance
+  stale_threshold:       500   # T_stale: steps before rejuvenation
+  cos_prune_threshold:   0.98  # Cosine similarity threshold for pruning
+  grad_update_eps:       0.01  # Gradient update magnitude threshold
+
+# -----------------------------------------------------------------------
+# Training Hyperparameters
+# -----------------------------------------------------------------------
+training:
+  epochs:                50
+  batch_size:            128
+  learning_rate:         2.0e-5   # eta
+  weight_decay:          1.0e-2
+  warmup_fraction:       0.10     # 10% of total steps
+  scheduler:             "cosine" # cosine annealing after warmup
+
+  # Loss weights (Eq. 15)
+  contrastive_temperature: 0.07   # tau
+  alpha:                   1.0    # BCE weight
+  mu:                      0.1    # Diversity loss weight
+  focal_gamma:             2.0    # Focal loss gamma for imbalanced sets
+
+  # Mixed precision and compute
+  fp16:                  true
+  grad_clip:             1.0
+  num_workers:           4
+
+  # Hardware (as reported in paper)
+  # 4x NVIDIA A100 80GB, PyTorch 2.1, FP16
+
+# -----------------------------------------------------------------------
+# Data
+# -----------------------------------------------------------------------
+data:
+  data_dir: "data/"
+  datasets:
+    - advbench
+    - jailbreakbench
+    - toxicchat
+    - promptsafety
+
+# -----------------------------------------------------------------------
+# Evaluation
+# -----------------------------------------------------------------------
+evaluation:
+  threshold:        0.5
+  zdr_dataset:      "promptsafety"   # Dataset used for ZDR computation
+  batch_size:       256
